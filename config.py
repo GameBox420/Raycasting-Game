@@ -1,4 +1,5 @@
 import pygame, math
+pygame.init()
 #main game variables
 vec = pygame.math.Vector2 #2 for two dimensional
 RES_H = 1080
@@ -35,4 +36,7 @@ textures = [
     pygame.image.load(path+"cloth.png"),
     pygame.image.load(path+"bluebrick.png")
 ]
-gameFont = pygame.font.Font("Assets/Pixeltype.ttf",30, bold=False, italic=False)
+gameFont = pygame.font.Font(path+"Pixeltype.ttf",30)
+
+pygame.mixer.music.load(path+"music.mp3")
+pygame.mixer.music.play(-1)

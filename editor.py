@@ -11,7 +11,7 @@ MAP_BUFFER = [] #the map data
 DRAW_BUFFER = 1 #the tile ID currently being drawn
 file = str()
 
-font = pygame.font.Font("Assets/Pixeltype.ttf",30, bold=False, italic=False)
+font = pygame.font.Font("Assets/Pixeltype.ttf",30)
 textData = [
     [font.render("File 1",100,(0,0,0),('gray')),100,50],
     [font.render("File 2",100,(0,0,0),('gray')),200,50],
@@ -128,25 +128,25 @@ def drawMap():
 
 def GUI():
     global selected_pos, DRAW_BUFFER
-    pygame.draw.rect(win, (250,250,250),(640,0,1280,640))
+    pygame.draw.rect(win, (250,250,250),(640,0,1280,640))       #draw the white box over the button area
     #draw buttons and check for clicks
     for i in range(len(buttons)):
         buttons[i].blit()
-        if buttons[i].getPressed(pygame.math.Vector2(pygame.mouse.get_pos())):
-            DRAW_BUFFER = i
-            selected_pos = buttons[i].position
+        if buttons[i].getPressed(pygame.math.Vector2(pygame.mouse.get_pos())): #draw all the buttons and check for any clicks
+            DRAW_BUFFER = i                         #changed the texture on the "paintbrush" to whatever button was clicked
+            selected_pos = buttons[i].position      #change where the rectangle signifying which button is selected is
     pygame.draw.rect(win, (250,165,0),(selected_pos.x,selected_pos.y,64,64),2)
         
     
 def drawCursor():
-    pygame.draw.rect(win,(255,165,0),(cursor_pos.y*32,cursor_pos.x*32,32,32),5)
+    pygame.draw.rect(win,(255,165,0),(cursor_pos.y*32,cursor_pos.x*32,32,32),5) #draw what grid on the map the mouse is in
     
 def getInput():
     global cursor_pos, last_keyboard_pos
     mousePos = pygame.math.Vector2(pygame.mouse.get_pos())
     mapPos =pygame.math.Vector2(mousePos.y//32,mousePos.x//32)
     keys = pygame.key.get_pressed()
-    #move cursor, if mouse is on the map grid, use mouse position, if it isnt, use WASD to move cursor
+    #move cursor, if mouse is on the map grid, use mouse position, if it isnt, //use WASD to move cursor// <-removed
     if mousePos.x > 640:
         cursor_pos = last_keyboard_pos
     #edit tiles
@@ -155,17 +155,17 @@ def getInput():
         cursor_pos = mapPos
         if pygame.mouse.get_pressed(3)[0]:
             print("Drew ID ",DRAW_BUFFER," at coordinate ",cursor_pos)
-            MAP_BUFFER[int(20 * cursor_pos.x + cursor_pos.y)] = DRAW_BUFFER
+            MAP_BUFFER[int(20 * cursor_pos.x + cursor_pos.y)] = DRAW_BUFFER #change the map buffer
         if pygame.mouse.get_pressed(3)[2]:
-            MAP_BUFFER[int(20 * cursor_pos.x + cursor_pos.y)] = 0
+            MAP_BUFFER[int(20 * cursor_pos.x + cursor_pos.y)] = 0           #change the map buffer
         if keys[K_1]:
-            MAP_BUFFER[int(20 * cursor_pos.x + cursor_pos.y)] = 1
+            MAP_BUFFER[int(20 * cursor_pos.x + cursor_pos.y)] = 1           #still, change the map buffer
     
 
 selected_pos = buttons[0].position
 
 def printMapData(file_name):
-    file = open(file_name, 'r')
+    file = open(file_name, 'r') #i dont think this gets used either, it just prints the text in the file         
     data = file.read()
     print(data)
     
@@ -174,7 +174,7 @@ def printMapData(file_name):
 def runEditor():
     global MAP_BUFFER, DRAW_BUFFER
     pygame.mouse.set_visible(True)
-    file = fileSelectMenu()
+    file = fileSelectMenu()             #get the map selected using the GUI file select
     MAP_BUFFER = readMapData(file)
 
     pygame.mouse.set_visible(True)
@@ -183,17 +183,17 @@ def runEditor():
     while editing:
         drawMap()
         GUI()
-        drawCursor()
+        drawCursor()                        #main loop
         getInput()
         for event in pygame.event.get():
             if event.type == QUIT:
                 editing = False
             if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
+                if event.key == K_ESCAPE:           #close the editor by pressing escape or clicking X on the window
                     editing = False  
         pygame.display.update()
-        clock.tick(60)
-        win.fill((0,0,0))
-    print("Saving Map to file ",file)
-    writeMapData(MAP_BUFFER,file)
-    pygame.mouse.set_visible(True)
+        clock.tick(60)              #menu runs at 60fps
+        win.fill((0,0,0))           #clear screen
+    print("Saving Map to file ",file)   
+    writeMapData(MAP_BUFFER,file)   #write the map buffer to the selected file
+    pygame.mouse.set_visible(True) #hide mouse again

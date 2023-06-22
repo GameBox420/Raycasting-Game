@@ -1,10 +1,7 @@
 import sys,math,threading
 import pygame;from pygame.locals import *; pygame.init() #get pygame ready
 import config,editor #import the other project programs
-from config import *
-
-
-
+from config import *    
 
 class Player():
     def __init__(self):
@@ -103,7 +100,7 @@ def castRay(rayNum,rayAng,map_id) :
     #This raycasting algorithm uses DDA, or digital differential analyzer. DDA is used to find multiple intersection points of a line
     #traveling on a grid. DDA is so exceptionally fast because it calculates an offset, which is used to increment lines to the exact
     #next interesection point of the ray. This drastically decreases the number of checks made in comparison to the original algorithm I used
-    #which simple incremented the ray by the sine and cosine of the ray's angle. Essentially, the function runs in a structure like this:
+    #which simply incremented the ray by the sine and cosine of the ray's angle. Essentially, the function runs in a structure like this:
     #
     # The player is on a map made up of a grid of 1 unit by 1 unit square tiles. The map contains data on each tile, with a 0 being air,
     # that does not interact with rays, and numbers over 0, which do interact with rays.
@@ -230,12 +227,14 @@ def runLevel():
             if event.type == KEYDOWN: #if event is a pressed key, check if the key is escape. if it is, exit the program
                 if event.key == K_ESCAPE:
                     running = False
+                #the rest of these are major functions of the program (not moving or mouse) so i put them all into this keyboard check
                 elif event.key == K_o:
-                    editor.runEditor()
-                    win = pygame.display.set_mode((10,10))
-                    map = readMapData(input("Please select a map to load (Don't include.txt)")+".txt")
+                    editor.runEditor() #run the map editor
                     win = pygame.display.set_mode((RES_W, RES_H),flags=pygame.FULLSCREEN,vsync=1)
-                    pygame.mouse.set_visible(False)
+                elif event.key == K_l:
+                    map = readMapData(editor.fileSelectMenu()) #open the map selected, and reset the player position
+                    P1.pos = pygame.math.Vector2(2*blockRes,2*blockRes)
+                    win = pygame.display.set_mode((RES_W, RES_H),flags=pygame.FULLSCREEN,vsync=1)
                 elif event.key == K_t: #flip the daytime variable
                     if isDaytime:isDaytime = False
                     else:        isDaytime = True
@@ -257,7 +256,7 @@ def runLevel():
         displayText()
         pygame.display.flip()     #update the screen
         gameClock.tick(FPS)     #.tick automatically delays the program to reach the FPS you give it, in this case it will add an automatic delay to cap the fps at 60
-        pygame.display.set_caption("Raycaster    FPS: " + str(int(gameClock.get_fps())) + " Daytime: " + str(isDaytime)) #get fps, round it with int(), string it with str()  
+        pygame.display.set_caption("Raycaster") #get fps, round it with int(), string it with str()  
 runLevel()
 pygame.quit()
 sys.exit()
